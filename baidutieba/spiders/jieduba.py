@@ -11,12 +11,12 @@ class JiedubaSpider(scrapy.Spider):
 
     def start_requests(self):
         reqs = []
-        for i in range(0, 1001, 50):
-            req = scrapy.Request('http://tieba.baidu.com/f?kw=戒赌&ie=utf-8&pn=%s' % i)
+        for i in range(0, 10001, 50):
+            #req = scrapy.Request('http://tieba.baidu.com/f?kw=戒赌&ie=utf-8&pn=%s' % i)
+            req = scrapy.Request('http://tieba.baidu.com/f?kw=闪银&ie=utf-8&pn=%s' % i)
             reqs.append(req)
 
         return reqs
-
 
     def parse(self, response):
 

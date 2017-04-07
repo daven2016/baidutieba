@@ -12,6 +12,7 @@ from scrapy.conf import settings as st
 from scrapy.exceptions import DropItem
 import logging
 import datetime
+import re
 
 
 class NormPipeline(object):
@@ -37,27 +38,36 @@ class NormPipeline(object):
         return item
 
     def norm_time(self, stime):
-        if stime.find(':') != -1:
+        if re.search('\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}', stime):
+            dt = datetime.datetime.strptime(stime, "%Y-%m-%d %H:%M")
+            sdt = int(dt.timestamp())
+            return sdt
+
+        elif re.search('\d{4}-\d{1,2}', stime):
+            ts = stime.strip().split('-')
+            dt = datetime.datetime(int(ts[0]), int(ts[1]), 1, 0, 0)
+            sdt = int(dt.timestamp())
+            return sdt
+
+        elif re.search('\d{1,2}:\d{1,2}', stime):
             ts = stime.strip().split(':')
             t = datetime.time(int(ts[0]), int(ts[1]))
-
             d = datetime.date.today()
             dt = datetime.datetime.combine(d, t)
-            #sdt = dt.strftime('%Y-%m-%d %H:%M')
             sdt = int(dt.timestamp())
             return sdt
 
-        if stime.find('-') != -1:
+        elif re.search('\d{1,2}-\d{1,2}', stime):
             ds = stime.strip().split('-')
-            d = datetime.date(2017, int(ds[0]), int(ds[1]))
+            year = datetime.date.today().year
+            d = datetime.date(year, int(ds[0]), int(ds[1]))
             t = datetime.time(0, 0)
             dt = datetime.datetime.combine(d, t)
-            #sdt = dt.strftime('%Y-%m-%d %H:%M')
             sdt = int(dt.timestamp())
             return sdt
-
-        logging.debug('Norm_time: new time style {}'.format(stime))
-        return -1
+        else:
+            logging.debug('Norm_time: new time style {}'.format(stime))
+            return -1
 
 
 class BaidutiebaPipeline(object):

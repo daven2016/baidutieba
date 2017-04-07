@@ -30,7 +30,7 @@ CONCURRENT_REQUESTS = 32
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 5
+DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -42,7 +42,7 @@ COOKIES_ENABLED = False
 RETRY_ENABLED = False
 
 # 减少超时时间
-DOWNLOAD_TIMEOUT = 15
+DOWNLOAD_TIMEOUT = 10
 
 # 关闭重定向
 REDIRECT_ENABLED = False
@@ -84,8 +84,8 @@ ITEM_PIPELINES = {
     'baidutieba.pipelines.MongodbPipeline': 500,
 }
 
-MONGODB_SERVER = "192.168.1.239"
-#MONGODB_SERVER = "localhost"
+#MONGODB_SERVER = "192.168.1.239"
+MONGODB_SERVER = "localhost"
 MONGODB_PORT = 27017
 MONGODB_DB = "baidutieba"
 MONGODB_COLLECTION = "jieduba"
@@ -93,7 +93,7 @@ MONGODB_COLLECTION = "jieduba"
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True
 # The initial download delay
-AUTOTHROTTLE_START_DELAY = 5
+#AUTOTHROTTLE_START_DELAY = 5
 # The maximum download delay to be set in case of high latencies
 #AUTOTHROTTLE_MAX_DELAY = 60
 # The average number of requests Scrapy should be sending in parallel to
