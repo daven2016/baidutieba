@@ -7,13 +7,20 @@ from baidutieba.items import BaidutiebaItem
 class JiedubaSpider(scrapy.Spider):
     name = "jieduba"
     allowed_domains = ["baidu.com"]
-    start_urls = ['http://tieba.baidu.com/f?kw=戒赌&ie=utf-8&pn=0']
+    start_urls = ['http://tieba.baidu.com/f?kw=飞贷&ie=utf-8&pn=0']
+
+
+    def __init__(self, tieba='戒赌', num=100, *args, **kwargs):
+        super(JiedubaSpider, self).__init__(*args, **kwargs)
+        self.tieba = tieba
+        self.num = int(num)
 
     def start_requests(self):
         reqs = []
-        for i in range(0, 10001, 50):
-            #req = scrapy.Request('http://tieba.baidu.com/f?kw=戒赌&ie=utf-8&pn=%s' % i)
-            req = scrapy.Request('http://tieba.baidu.com/f?kw=闪银&ie=utf-8&pn=%s' % i)
+        for i in range(0, self.num, 50):
+            #req = scrapy.Request('http://tieba.baidu.com/f?kw=信用钱包&ie=utf-8&pn=%s' % i)
+            req = scrapy.Request('http://tieba.baidu.com/f?kw={0}&ie=utf-8&pn={1}'.format(self.tieba, str(i)))
+            self.logger.info(req.url)
             reqs.append(req)
 
         return reqs
@@ -36,12 +43,17 @@ class JiedubaSpider(scrapy.Spider):
             i['reply_count'] = li.xpath('div/div[1]/span/text()').extract()[0]
             i['author'] = li.xpath('div/div[2]/div[1]/div[2]/span[1]').re(r'title=".*?:(.*?)"')[0]
             i['create_time'] = li.xpath('div/div[2]/div[1]/div[2]/span[2]/text()').extract()[0]
-            i['last_reply'] = li.xpath('div/div[2]/div[2]/div[2]/span[1]').re(r'title=".*?:(.*?)"')[0]
-            i['last_reply_time'] = li.xpath('div/div[2]/div[2]/div[2]/span[2]/text()').extract()[0].strip()
+            last_reply = li.xpath('div/div[2]/div[2]/div[2]/span[1]').re(r'title=".*?:(.*?)"')
+            if last_reply:
+                i['last_reply'] = last_reply[0].strip()
+
+            last_time = li.xpath('div/div[2]/div[2]/div[2]/span[2]/text()').extract()
+            if last_time:
+                i['last_reply_time'] = last_time[0].strip()
 
             post_url = li.xpath('div/div[2]/div[1]/div[1]/a/@href').extract()
             i['url'] = 'https://tieba.baidu.com' + post_url[0]
-
+            i['collection'] = self.tieba
             yield scrapy.Request(url=i['url'], meta={'item': i}, callback=self.parse_detail, dont_filter=True)
 
 
@@ -69,7 +81,7 @@ class JiedubaSpider(scrapy.Spider):
             one_play['vip'] = play.xpath('div[1]//li[@class="l_badge"]/div/a/div[2]/text()').extract_first(default=-1)
 
             floor = play.xpath('.//div[@class="core_reply_tail clearfix"]')
-            one_play['play_time'] = floor.re(r'>(\d{4}.*?\d)<')[0]
+            one_play['play_time'] = floor.re(r'>(\d{4}-\d{1,2}-\d.*?\d)<')[0]
             client = floor.re(r'blank">(.*?)</a>')
             if client:
                 one_play['client'] = client[0]

@@ -67,7 +67,8 @@ REDIRECT_ENABLED = False
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'baidutieba.middlewares.MyCustomDownloaderMiddleware': 543,
+    #'baidutieba.middlewares.MyCustomDownloaderMiddleware': 543,
+    #'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
 #}
 
 # Enable or disable extensions
@@ -84,11 +85,20 @@ ITEM_PIPELINES = {
     'baidutieba.pipelines.MongodbPipeline': 500,
 }
 
-#MONGODB_SERVER = "192.168.1.239"
-MONGODB_SERVER = "localhost"
+MONGODB_SERVER = "192.168.1.239"
+#MONGODB_SERVER = "localhost"
 MONGODB_PORT = 27017
 MONGODB_DB = "baidutieba"
-MONGODB_COLLECTION = "jieduba"
+#MONGODB_COLLECTION = "jieduba"
+
+MONGODB_COLLECTION = {'飞贷': 'feidai',
+                      '戒赌': 'jieduba',
+                      '闪银': 'shanyin',
+                      '宜信': 'yixin',
+                      '手机贷': 'shoujidai',
+                      '信用贷': 'xinyongdai',
+                      '现金巴士': 'xianjinbashi'}
+
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True

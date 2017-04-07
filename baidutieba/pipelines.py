@@ -83,8 +83,8 @@ class BaidutiebaPipeline(object):
 class MongodbPipeline(object):
     def __init__(self):
         client = MongoClient(st['MONGODB_SERVER'], st['MONGODB_PORT'])
-        db = client[st['MONGODB_DB']]
-        self.collection = db[st['MONGODB_COLLECTION']]
+        self.db = client[st['MONGODB_DB']]
+        #self.collection = db[st['MONGODB_COLLECTION']]
 
     def process_item(self, item, spider):  # 注意：这个函数的名字不能改
         valid = True
@@ -93,8 +93,11 @@ class MongodbPipeline(object):
                 valid = False
                 raise DropItem('Missing{0}！'.format(data))
         if valid:
+            col = item['collection']
+            col_set = st['MONGODB_COLLECTION'][col]
+            collection = self.db[col_set]
             #self.collection.insert(dict(item))
-            self.collection.update({'id': item['id']}, {'$set': dict(item)}, upsert=True)
+            collection.update({'id': item['id']}, {'$set': dict(item)}, upsert=True)
 
             logging.debug("Save To Mongodb: success \n")
 

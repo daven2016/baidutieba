@@ -10,6 +10,7 @@ import scrapy
 
 class BaidutiebaItem(scrapy.Item):
     # define the fields for your item here like:
+    collection = scrapy.Field()
     id = scrapy.Field()
     subject = scrapy.Field()
     author = scrapy.Field()
